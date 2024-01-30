@@ -8,6 +8,7 @@ import com.devsuperior.dsmeta.entities.Sale;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDate;
+import java.util.List;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
     @Query(value = "SELECT obj FROM Sale obj JOIN FETCH obj.seller " +
@@ -15,9 +16,10 @@ public interface SaleRepository extends JpaRepository<Sale, Long> {
       "AND obj.date <= :dataFinal " +
       "AND UPPER(obj.seller.name) LIKE UPPER(CONCAT('%', :name, '%'))",
       countQuery = "SELECT COUNT(obj) FROM Sale obj JOIN obj.seller " +
-       "WHERE obj.date >= :dataInical " +
+       "WHERE obj.date >= :dataInicial " +
        "AND obj.date <= :dataFinal " +
        "AND UPPER(obj.seller.name) LIKE UPPER(CONCAT('%', :name, '%'))")
     Page<Sale> searchReport(String name, LocalDate dataInicial, LocalDate dataFinal, Pageable pageable);
+
 
 }
