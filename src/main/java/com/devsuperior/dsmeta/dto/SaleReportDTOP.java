@@ -8,19 +8,19 @@ public class SaleReportDTOP {
     private Long id;
     private Double amount;
     private LocalDate date;
-    private String name;
+    private String sellerName;
 
-    public SaleReportDTOP(Long id, Double amount, LocalDate date, String name) {
+    public SaleReportDTOP(Long id, LocalDate date,Double amount, String name) {
         this.id = id;
-        this.amount = amount;
         this.date = date;
-        this.name = name;
+        this.amount = amount;
+        this.sellerName = name;
     }
     public SaleReportDTOP (Sale x){
         this.id = x.getId();
         this.amount = x.getAmount();
         this.date = x.getDate();
-        this.name = x.getSeller().getName();
+        this.sellerName = x.getSeller().getName();
     }
 
     public Long getId() {
@@ -36,6 +36,6 @@ public class SaleReportDTOP {
     }
 
     public String getName() {
-        return name;
+        return sellerName;
     }
 }

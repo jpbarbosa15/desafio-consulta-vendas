@@ -4,9 +4,12 @@ import java.time.Instant;
 import java.time.LocalDate;
 import java.time.ZoneId;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import com.devsuperior.dsmeta.dto.SaleReportDTOP;
+import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -28,25 +31,42 @@ public class SaleService {
 		return new SaleMinDTO(entity);
 	}
 
-	public Page<SaleReportDTOP> findRelatorio(String name, String minDate, String maxDate, Pageable pageable){
-			LocalDate startDate = null;
-			LocalDate endDate = null;
+	public Page<SaleReportDTOP> findRelatorio(String name, String minDate, String maxDate, Pageable pageable) {
+		LocalDate startDate = null;
+		LocalDate endDate = null;
+		if (minDate != null) {
+			startDate = LocalDate.parse(minDate);
+		} else {
+			startDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()).minusYears(1L);
+		}
 
-			if (minDate != null) {
-				startDate = LocalDate.parse(minDate);
-			} else {
-				startDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()).minusYears(1L);
-			}
+		if (maxDate != null) {
+			endDate = LocalDate.parse(maxDate);
+		} else {
+			endDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		}
 
-			if (maxDate != null) {
-				endDate = LocalDate.parse(maxDate);
-			} else {
-				endDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
-			}
+		Page<Sale> result = repository.searchReport(name, startDate, endDate, pageable);
+		Page<SaleReportDTOP> dto = result.map(x -> new SaleReportDTOP(x));
+		return dto;
+	}
 
-			Page<Sale> result = repository.searchReport(name, startDate, endDate, pageable);
-			Page<SaleReportDTOP> dto = result.map(x -> new SaleReportDTOP(x));
-			return dto;
+	public List<SaleSummaryDTO> findsummary(String minDate, String maxDate){
+		LocalDate startDate = null;
+		LocalDate endDate = null;
+		if (minDate != null) {
+			startDate = LocalDate.parse(minDate);
+		} else {
+			startDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault()).minusYears(1L);
+		}
 
+		if (maxDate != null) {
+			endDate = LocalDate.parse(maxDate);
+		} else {
+			endDate = LocalDate.ofInstant(Instant.now(), ZoneId.systemDefault());
+		}
+
+		List<SaleSummaryDTO> dto = repository.searchSummary(startDate,endDate);
+		return dto;
 	}
 }
